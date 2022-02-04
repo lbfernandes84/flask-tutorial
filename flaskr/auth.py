@@ -26,7 +26,7 @@ bp = Blueprint('auth', __name__, url_prefix='/auth')
 # A funcao aceita tanto os metodos get e post
 bp.route('/register', methods=('GET', 'POST'))
 def register():
-	if(request.method == 'POST'):
+	if request.method == 'POST':
 		# O atributo form é uma especializacao de dict que possue pares key/value
 		username = request.form['username']
 		password = request.form['password']
@@ -53,5 +53,32 @@ def register():
 				# Nesse caso url_for roteia para a view relacionada com o blueprint
 				# Lembrese que o BluePrint bp agrupa todos as views roteadas de urls com prefixo auth
 				return redirect(url_for("auth.login"))
+		#flash guarda mensagens que mais tarde serao renderizadas com o template
 		flash(error)
 	return render_template('auth/register.html')
+
+bp.route('/login', methods=['GET', 'POST'])
+def login():
+	if request.method == 'POST':
+		username = request.form['username']
+		password = request.form['password']
+		db = get_db()
+		error = None
+		user = db.execute(
+			'SELECT * FROM user WHERE username = ?', (username)
+		).fetchone()#Fetchone retorna apenas a primeira linha da query
+
+		if user is None:
+			error = 'Incorrect username. '
+		#check_password_hash recupera o password que o usuario digitou e compara com o retornado na query
+		elif not check_password_hash(user['password'] , password):
+			error = 'Incorrect password'
+		if error is None:
+			# session é um dicionario que guarda informacoes que são compartilhadas entre requsets
+			# Nesse caso, quando os dados de login sao validos o id do usuario é mantido na sessao
+			# Esse objeto é guardado como cookie no website
+			session.clear()
+			session['user_id'] = user['id']
+			return redirect(url_for('index'))
+		flash(error)
+	render_template('auth/login.html')
