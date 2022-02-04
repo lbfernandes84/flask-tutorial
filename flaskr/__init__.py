@@ -27,11 +27,17 @@ def create_app(test_config=None):
 		app.config.from_mapping(test_config)
 
 	try:
-		# Garante que o diretorio da instancia existe, pois se caso
+		# Garante que o diretorio da instancia existe, 
+		# pois se caso tal diretorio nao existir o mesmo é criado
+		#...esse diretorio é onde instancias do banco de dado são criadas portanto deve sempre existir
 		os.makedirs(app.instance_path)
 	except OSError:
 		pass
 	@app.route('/hello')
 	def hello():
 		return 'Hello World'
+
+	from . import db
+	db.init_app(app)
+	
 	return app
