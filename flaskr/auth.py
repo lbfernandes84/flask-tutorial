@@ -1,3 +1,4 @@
+# modulo de programacao funcional do python. Iterage sobre objetos chamaveis (callable)
 import functools
 
 # Blueprint é uma forma de organizar views e outros codigos.
@@ -74,7 +75,7 @@ def login():
 		elif not check_password_hash(user['password'] , password):
 			error = 'Incorrect password'
 		if error is None:
-			# session é um dicionario que guarda informacoes que são compartilhadas entre requsets
+			# session é um dicionario que guarda informacoes que são compartilhadas entre requests
 			# Nesse caso, quando os dados de login sao validos o id do usuario é mantido na sessao
 			# Esse objeto é guardado como cookie no website
 			session.clear()
@@ -82,3 +83,36 @@ def login():
 			return redirect(url_for('index'))
 		flash(error)
 	render_template('auth/login.html')
+
+#before_app_request executa antes de qualquer view, independente da URL chamada
+@bp.before_app_request
+def load_logged_in_user():
+	#recupera o id do usuario registrado na sessao
+	user_id = session.get('user_id')
+	if user_id is None:
+		g.user = None
+	else:
+		g.user = get_db().execute(
+			'SELECT * FROM user WHERE id = ?',(user_id)
+		).fetchone()
+
+
+@bp.rout('/logout')
+def logout():
+	session.clear()
+	return redirect(url_for('index'))
+
+# O conceito abaixo é complexo quando visto pela primeira vez
+# ...a funcao login_required retorna uma funcao decorada com functools.wraps
+# ...a funcao wrapped_view decorada com functools.wraps quando chamada faz o seguinte:
+# - verifica se o usuario esta ativo
+# - Caso negativo direciona o usuario a pagina de login
+# - Caso positivo retorna a funcao que é a view "wrapped" com o functools.wraps e os argumentos necessarios
+
+def login_required(view):
+	@functools.wraps(view)
+	def wrapped_view(**kwargs):
+		if g.user is None:
+			return redirect(url_for('auth.login'))
+		return view(**kwargs)
+	return wrapped_view
