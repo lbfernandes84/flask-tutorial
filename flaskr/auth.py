@@ -97,7 +97,7 @@ def load_logged_in_user():
 		).fetchone()
 
 
-@bp.rout('/logout')
+@bp.route('/logout')
 def logout():
 	session.clear()
 	return redirect(url_for('index'))
@@ -113,6 +113,9 @@ def login_required(view):
 	@functools.wraps(view)
 	def wrapped_view(**kwargs):
 		if g.user is None:
+			#a funcao url_for funciona para chamar a view correspondente ao argumento
+			# ...o nome da view é o nome da funcao implementada como wrapped_view
+			# ...para views decoradas com blueprints o nome do argumento é o nome do Blueprint.nome_da_view
 			return redirect(url_for('auth.login'))
 		return view(**kwargs)
 	return wrapped_view
