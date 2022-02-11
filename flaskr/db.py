@@ -6,6 +6,7 @@ import click
 # ... é usado para guardar informações que podem ser acessadas
 # ... por multiplas funcoes durante uma requisicao
 # ... no caso esse objeto é usado para guardar uma referencia ao banco de dados (db)
+# ...g é uma contração de global
 from flask import g
 
 # current_app é tambem um objeto especial que aponta para a aplicacao flask que esta manipulando a conexão

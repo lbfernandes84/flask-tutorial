@@ -25,17 +25,19 @@ bp = Blueprint('auth', __name__, url_prefix='/auth')
 # Quando a url /auth/register é chamada é feito um roteamento para essa funcao
 # O protocolo http recebe o valor retornado para a funcao e devolve para o navegador
 # A funcao aceita tanto os metodos get e post
-bp.route('/register', methods=('GET', 'POST'))
+@bp.route('/register', methods=('GET', 'POST'))
 def register():
+	print("TEST REGISTER")	
 	if request.method == 'POST':
 		# O atributo form é uma especializacao de dict que possue pares key/value
 		username = request.form['username']
 		password = request.form['password']
 		db = get_db()
+		error = None
 		if not username:# Mensagem de usuario requisitado quando nao vem no request
 			error = 'Username is required'
 		elif not password:# Mensagem de senha requisitada quando nao vem no request
-			erro = 'Pasword is required'
+			error = 'Pasword is required'
 
 		if error is None:
 			try:
@@ -55,18 +57,20 @@ def register():
 				# Lembrese que o BluePrint bp agrupa todos as views roteadas de urls com prefixo auth
 				return redirect(url_for("auth.login"))
 		#flash guarda mensagens que mais tarde serao renderizadas com o template
+		print(f'Error{error}')
 		flash(error)
 	return render_template('auth/register.html')
 
-bp.route('/login', methods=['GET', 'POST'])
+@bp.route('/login', methods=['GET', 'POST'])
 def login():
+	print("TEST LOGIN")	
 	if request.method == 'POST':
 		username = request.form['username']
 		password = request.form['password']
 		db = get_db()
 		error = None
 		user = db.execute(
-			'SELECT * FROM user WHERE username = ?', (username)
+			'SELECT * FROM user WHERE username = ?', (username,)
 		).fetchone()#Fetchone retorna apenas a primeira linha da query
 
 		if user is None:
@@ -82,7 +86,7 @@ def login():
 			session['user_id'] = user['id']
 			return redirect(url_for('index'))
 		flash(error)
-	render_template('auth/login.html')
+	return render_template('auth/login.html')
 
 #before_app_request executa antes de qualquer view, independente da URL chamada
 @bp.before_app_request

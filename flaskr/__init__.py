@@ -4,6 +4,7 @@ import os
 from flask import Flask
 
 def create_app(test_config=None):
+	print("TESTE APP")
 	#cria e configura a aplicacao
 	#A aplicacao é uma instancia do objeto Flask
 	#O primeiro parametro é o nome da aplicacao. __name__ guarda o nome do diretorio. Pode ser qualquer nome diferente
@@ -33,9 +34,6 @@ def create_app(test_config=None):
 		os.makedirs(app.instance_path)
 	except OSError:
 		pass
-	@app.route('/hello')
-	def hello():
-		return 'Hello World'
 
 	# Inicializa a aplicacao
 	from . import db
@@ -43,6 +41,7 @@ def create_app(test_config=None):
 
 	# Registra o blueprint de autenticacao
 	from . import auth
+	print("CHegou")
 	app.register_blueprint(auth.bp)
 
 	return app
