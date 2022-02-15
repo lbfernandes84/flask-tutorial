@@ -41,7 +41,15 @@ def create_app(test_config=None):
 
 	# Registra o blueprint de autenticacao
 	from . import auth
-	print("CHegou")
+	print("Registrou blueprint de autenticacao")
 	app.register_blueprint(auth.bp)
+	
+	# Registra o blueprint de blog
+	from . import blog
+	app.register_blueprint(blog.bp)
+	#Roteia o endpoint index associando a qualquer view que for roteada como tal nome
+	# url_for('index') e url_for('blog.index') irao rotear para a mesma view
+	app.add_url_rule('/', endpoint='index')
+	print("Registrou blueprint de blog")
 
 	return app
