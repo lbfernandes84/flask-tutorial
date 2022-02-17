@@ -31,8 +31,7 @@ def get_db():
 
 #Essa funcao funciona como esperado, quando a requisicao deseja fechar a conexao com o banco
 # ...verifica se existe objeto de banco de dados e se caso positivo fecha a conexao
-def close_db(e=None):
-	a =1
+def close_db(e=None):	
 	db = g.pop("db", None)
 	if db is not None:
 		db.close()
