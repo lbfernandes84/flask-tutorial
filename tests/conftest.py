@@ -9,13 +9,13 @@ with open(os.path.join(os.path.dirname(__file__), 'data.sql'), 'rb') as f:
 
 #Fixtures sao como os antigos SetUp nos testes de unidade no Python
 @pytest.fixture
-def app()
+def app():
 	# registra e cria um diretorio temporario
 	db_fd, db_path = tempfile.mkstemp()
 
 	# chama o factory da aplicacao passando um mapa com o caminho temporario para criar o banco de dados
 	app = create_app({
-		'TESTING': True# Essa flag modifica alguns comportamentos da aplicacao para que seja mais simples testa-la
+		'TESTING': True,# Essa flag modifica alguns comportamentos da aplicacao para que seja mais simples testa-la
 		'DATABASE': db_path
 		})
 
@@ -32,7 +32,7 @@ def app()
 
 @pytest.fixture
 def client(app):
-	#Ao chamar o methodo abaixxo a aplicacao permite receber requests sem que um servidor esteja rodando
+	#O metodo abaixo retorna um cliente de testes que permite fazer requisições sem um servidor
 	return app.test_client()
 
 @pytest.fixture
