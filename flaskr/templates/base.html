@@ -13,13 +13,14 @@ url_for, que também já foi explicado o que é, também está disponivel
 A funcao get_flashed_messages recupera o que foi registado com a funcao flash(), no caso de nossas views 
 de autenticacao, foi registrado os erros do 
 #}
-<title>{%block title%}{% endblock %} - Flaskr</title>
+<title>{%block title %}{% endblock %} - Flaskr</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 <nav>
 	<h1>Flaskr</h1>
 	<ul>
 		{% if g.user %}
 			<li><span>{{ g.user['usename'] }}</span></li>
+			<li class="username">{{g.user['username']}}</li>
 			<li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
 		{% else %}
 			<li><a href="{{ url_for('auth.register') }}">Register</a></li>
